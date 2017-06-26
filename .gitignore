@@ -1,6 +1,7 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
 /.git
+/.idea
 
 # dependencies
 /node_modules
@@ -21,3 +22,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.idea/gumul.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/workspace.xml
