@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
-import {actions} from '../modules/Gumi'
+import {actions} from '../modules/gumi'
 
 const Column = ({
 	                rowSpan, colSpan, format, pattern,

@@ -1,7 +1,9 @@
 import * as React from 'react'
 import {style} from 'typestyle'
 import {connect} from 'react-redux'
-import {actions} from '../modules/TableSize'
+import {actions} from '../modules/gumi'
+import XIcon from 'material-ui/svg-icons/image/view-compact'
+import {IconButton} from 'material-ui'
 
 const styles = {
 	container: style({
@@ -22,7 +24,10 @@ const styles = {
 	})
 }
 
-const TableSizeContainer = ({enabled, x, y, setX, setY, onStart, onEnd}) => (
+const arrange = (num, max) =>
+	[...new Array(((num || 0) < max ? max : num + 1) + 1).keys()].slice(1)
+
+const TableSizeContainer = ({generated, enabled, x, y, setX, setY, onStart, onEnd, onGenerate}) => (
 	<div className={styles.container}>
 		<div>
 			<input type="number" value={x} onChange={
@@ -31,28 +36,30 @@ const TableSizeContainer = ({enabled, x, y, setX, setY, onStart, onEnd}) => (
 			<input type="number" value={y} onChange={
 				e => setY(e, parseInt(e.target.value, 10))
 			}/>
+
+			<IconButton onClick={onGenerate}>
+				<XIcon/>
+			</IconButton>
 		</div>
 		<table className={styles.table}
-		       onMouseUp={onEnd}
-		       onMouseLeave={onEnd}>
+					 onMouseUp={onEnd}
+					 onMouseLeave={onEnd}>
 			<tbody>
 			{
-				[...Array(y >= 4 ? y + 2 : 5).keys()].map(
-					i => (
-						<tr key={i} onMouseEnter={e => enabled && setY(e, i + 1)}>
+				arrange(y, 5).map(i => (
+						<tr key={i} onMouseEnter={e => enabled && setY(e, i)}>
 							{
-								[...Array(x >= 9 ? x + 2 : 10).keys()].map(
-									j => (
+								arrange(x, 10).map(j => (
 										<td key={j}
-										    onMouseDown={
-											    e => {
-												    onStart(e)
-												    setX(e, j + 1)
-												    setY(e, i + 1)
-											    }
-										    }
-										    onMouseEnter={e => enabled && setX(e, j + 1)}
-										    className={j <= x && i <= y ? styles.selected : ''}></td>
+												onMouseDown={
+													e => {
+														onStart(e)
+														setX(e, j)
+														setY(e, i)
+													}
+												}
+												onMouseEnter={e => enabled && setX(e, j)}
+												className={j <= x && i <= y ? styles.selected : ''}/>
 									)
 								)
 							}
@@ -64,34 +71,55 @@ const TableSizeContainer = ({enabled, x, y, setX, setY, onStart, onEnd}) => (
 		</table>
 
 		<div>
-
+			{
+				generated && (
+					<table>
+						<thead>
+						{
+							[...new Array(y).keys()].map(i => (
+								<tr key={i}>
+									{
+										[...new Array(x).keys()].map(j => (
+											<th key={j}/>
+										))
+									}
+								</tr>
+							))
+						}
+						</thead>
+					</table>
+				)
+			}
 		</div>
 	</div>
 )
 
-const mapStateToProps = state => ({
-	enabled: state.size.enabled,
-	x:       state.size.x,
-	y:       state.size.y
-})
+const mapStateToProps = state => {
+	return ({
+		...state.gumi.size
+	})
+}
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-	setX:    (e, i) => {
+	setX:       (e, i) => {
 		e.preventDefault()
-		dispatch(actions.position({x: i}))
+		dispatch(actions.size.position({x: i}))
 	},
-	setY:    (e, i) => {
+	setY:       (e, i) => {
 		e.preventDefault()
-		dispatch(actions.position({y: i}))
+		dispatch(actions.size.position({y: i}))
 	},
-	onStart: e => {
+	onStart:    e => {
 		e.preventDefault()
-		dispatch(actions.enabled(true))
+		dispatch(actions.size.position({enabled: true}))
 	},
-	onEnd:   e => {
+	onEnd:      e => {
 		e.preventDefault()
-		dispatch(actions.enabled(false))
+		dispatch(actions.size.position({enabled: false}))
 	},
+	onGenerate: () => {
+		dispatch(actions.size.generate(true))
+	}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TableSizeContainer)

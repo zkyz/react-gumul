@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Gumul from '../Gumul'
+import Gumul from './Gumul'
 
-test('rendering', () => {
+it('rendering', () => {
 	ReactDOM.render(
 		<Gumul>
 		</Gumul>,
