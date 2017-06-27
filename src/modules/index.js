@@ -1,9 +1,8 @@
 import {combineReducers} from 'redux'
 import Gumi from './Gumi'
-import TableSizeSetter from './TableSizeSetter'
-
+import TableSize from './TableSize'
 
 export default combineReducers({
 	gumi: Gumi,
-	size: TableSizeSetter
+	size: TableSize
 })

@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Gumul from './Gumul'
+import Gumul from '../Gumul'
 
 test('rendering', () => {
 	ReactDOM.render(
