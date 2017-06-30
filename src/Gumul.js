@@ -1,50 +1,37 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {createStore} from 'redux'
 import {style} from 'typestyle'
-import {Provider} from 'react-redux'
-
-import reducers from './modules/index'
-import TableSizeContainer from './containers/TableSizeContainer'
-import GumiMenu from './components/GumiMenu'
-import {MuiThemeProvider} from 'material-ui'
+import {MuiThemeProvider} from 'material-ui/styles'
 import injectTapEventPlugin from 'react-tap-event-plugin'
+import Gumi from './components/Gumi'
+import Gumijul from './containers/Gumijul'
 
-
-const styles = {
-	base: style({
-		'':           {
-			height:         '100%',
-			tableLayout:    'fixed',
-			borderCollapse: 'collapse',
-			width:          '100%'
-		},
-		'& th, & td': {
-			border: '1px solid #aaa'
+const baseStyles = style({
+	'> table': {
+		borderCollapse: 'collapse',
+		tableLayout:    'fixed',
+		minWidth:       '30px',
+		'& th, & td':   {
+			border: '1px solid #aaa',
+			height: '1rem'
 		}
-	})
-}
-
-//noinspection JSUnresolvedVariable
-const extension = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-const store = createStore(reducers, extension)
-
-injectTapEventPlugin()
+	}
+})
 
 const Gumul = ({id}) => (
-	<Provider store={store}>
-		<MuiThemeProvider>
-			<div>
-				<table id={id} className={styles.base}/>
-				<GumiMenu />
-				<TableSizeContainer />
-			</div>
-		</MuiThemeProvider>
-	</Provider>
+	<MuiThemeProvider>
+		<div className={baseStyles}>
+			<Gumi />
+			<Gumijul />
+		</div>
+	</MuiThemeProvider>
 )
 
 Gumul.propTypes = {
 	id: PropTypes.string.isRequired
 }
+
+// material-ui required
+injectTapEventPlugin()
 
 export default Gumul

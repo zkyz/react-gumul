@@ -20,7 +20,7 @@ it('POSITION 이 조절될꺼야', () => {
 
 it('ENABLE 을 바꿀 수 있을껄', () => {
 	const given = {
-		type: types.ENABLED,
+		type:    types.ENABLED,
 		payload: true
 	}
 
