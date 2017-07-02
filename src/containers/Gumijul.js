@@ -1,8 +1,22 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
+import {createStyleSheet, withStyles} from 'material-ui/styles'
 
-const Gumijul = ({head, body}) => (
-	<table>
+const styles = createStyleSheet('Gumijul', theme => ({
+	'table': {
+		borderCollapse: 'collapse',
+		tableLayout:    'fixed',
+		minWidth:       '30px',
+		'& > thead':    {
+			'& + * > tr > td': {
+				border: '2px solid red'
+			}
+		}
+	}
+}))
+
+const Gumijul = ({classes, head, body}) => (
+	<table className={classes.table}>
 		<thead>
 		{
 			head.map((row, i) =>
@@ -36,4 +50,5 @@ const mapStateToProps = state => ({
 	...state.gumi
 })
 
-export default connect(mapStateToProps)(Gumijul)
+const Tag = withStyles(styles)(Gumijul)
+export default connect(mapStateToProps)(Tag)

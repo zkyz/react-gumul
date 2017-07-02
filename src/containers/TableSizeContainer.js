@@ -1,9 +1,9 @@
 import * as React from 'react'
-import {style} from 'typestyle'
 import {connect} from 'react-redux'
+import {createStyleSheet, withStyles} from 'material-ui/styles'
 import {actions} from '../modules/gumi'
 
-const baseStyles = style({
+const baseStyles = createStyleSheet({
 	padding:   '30px',
 	'> table': {
 		border:        '1px solid #ccc',
@@ -112,5 +112,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
 	}
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(TableSizeContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(
+	withStyles(baseStyles)(TableSizeContainer)
+)
 
