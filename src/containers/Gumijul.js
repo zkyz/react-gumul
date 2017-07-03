@@ -1,54 +1,84 @@
-import * as React from 'react'
+import React from 'react'
 import {connect} from 'react-redux'
 import {createStyleSheet, withStyles} from 'material-ui/styles'
+import CellEditor from './CellEditor'
 
-const styles = createStyleSheet('Gumijul', theme => ({
-	'table': {
-		borderCollapse: 'collapse',
-		tableLayout:    'fixed',
-		minWidth:       '30px',
-		'& > thead':    {
-			'& + * > tr > td': {
-				border: '2px solid red'
-			}
-		}
-	}
-}))
+const Gumijul = ({
+	                 classes, head, body,
+	                 onPick, onLeave, onSelect
+                 }) => (
+	<div>
+		<table className={classes.table}>
+			<colgroup>{
+				head[0].map((col, i) => <col key={i}/>)
+			}</colgroup>
+			<thead>{head.map((row, i) =>
+				<tr key={i}>{row.map((column, j) =>
+					<th key={j}
+					    contentEditable={true}
+					    onSelect={onSelect}
+					    onClick={onPick}
+					    onBlur={onLeave}
+					    dangerouslySetInnerHTML={{__html:column.content}}
+					/>
+				)}</tr>
+			)}</thead>
+		</table>
+		<table className={classes.table}>
+			<colgroup>{head[0].map((col, i) =>
+				<col key={i}/>
+			)}</colgroup>
+			<tbody>{body.map((row, i) =>
+				<tr key={i}>{row.map((column, j) =>
+					<td key={j}
+					    contentEditable={true}
+					    onSelect={onSelect}
+					    onClick={onPick}
+					    onBlur={onLeave}
+							dangerouslySetInnerHTML={{__html:column.content}}/>
+				)}</tr>
+			)}</tbody>
+		</table>
 
-const Gumijul = ({classes, head, body}) => (
-	<table className={classes.table}>
-		<thead>
-		{
-			head.map((row, i) =>
-				<tr key={i}>
-					{
-						row.map((col, j) =>
-							<th key={j}>{col.content}</th>
-						)
-					}
-				</tr>
-			)
-		}
-		</thead>
-		<tbody>
-		{
-			body.map((row, i) =>
-				<tr key={i}>
-					{
-						row.map((col, j) =>
-							<td key={j}>{col.content}</td>
-						)
-					}
-				</tr>
-			)
-		}
-		</tbody>
-	</table>
+		<CellEditor/>
+	</div>
 )
 
-const mapStateToProps = state => ({
-	...state.gumi
-})
-
-const Tag = withStyles(styles)(Gumijul)
-export default connect(mapStateToProps)(Tag)
+export default connect(
+	state => ({
+		...state.gumi
+	}),
+	dispatch => ({
+		onPick:   e => {
+			e.target.className = 'selected'
+		},
+		onLeave:  e => {
+			e.target.className = e.target.className.replace(/selected/, '')
+		},
+		onSelect: () => {
+			if (window.getSelection() && window.getSelection().type === 'Range')
+				console.log(window.getSelection().toString())
+		}
+	})
+)
+(
+	withStyles(createStyleSheet('Gumijul', theme => ({
+			'table': {
+				borderCollapse: 'collapse',
+				tableLayout:    'fixed',
+				minWidth:       '30px',
+				'& th, & td':   {
+					border:       '1px solid #ccc',
+					fontSize:     '1rem',
+					height:       '1rem',
+					outline:      'none',
+					'&.selected': {
+						backgroundColor: 'rgba(100, 200, 200, .2)',
+					}
+				}
+			}
+		})
+		)
+	)
+	(Gumijul)
+)

@@ -37,10 +37,21 @@ export default handleActions({
 	})
 }, {
 	edited: false,
-	head:   [[{
-		content: null
-	}]],
+	head:   [[
+		{
+			colSpan: 1,
+			rowSpan: 1,
+			content: 'te<br>st'
+		},
+		{
+			colSpan: 1,
+			rowSpan: 1,
+			content: 'te<br>st'
+		}
+	]],
 	body:   [[{
+		colSpan: 1,
+		rowSpan: 1,
 		content: null
 	}]]
 })

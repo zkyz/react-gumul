@@ -2,8 +2,7 @@ import * as React from 'react'
 import {connect} from 'react-redux'
 import Button from 'material-ui/Button'
 import ModeEdit from 'material-ui-icons/ModeEdit'
-
-const arrange = i => [...new Array(i)]
+import Gumijul from '../containers/Gumijul'
 
 const Gumi = ({edited, head, body}) => (
 	<div>
@@ -15,7 +14,7 @@ const Gumi = ({edited, head, body}) => (
 				: undefined
 		}
 
-		
+		<Gumijul />
 	</div>
 )
 
