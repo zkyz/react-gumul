@@ -4,9 +4,9 @@ import {createStyleSheet, withStyles} from 'material-ui/styles'
 import CellEditor from './CellEditor'
 
 const Gumijul = ({
-	                 classes, head, body,
-	                 onPick, onLeave, onSelect
-                 }) => (
+									 classes, head, body,
+									 onPick, onLeave, onSelect
+								 }) => (
 	<div>
 		<table className={classes.table}>
 			<colgroup>{
@@ -15,11 +15,11 @@ const Gumijul = ({
 			<thead>{head.map((row, i) =>
 				<tr key={i}>{row.map((column, j) =>
 					<th key={j}
-					    contentEditable={true}
-					    onSelect={onSelect}
-					    onClick={onPick}
-					    onBlur={onLeave}
-					    dangerouslySetInnerHTML={{__html:column.content}}
+							contentEditable={true}
+							onSelect={onSelect}
+							onClick={onPick}
+							onBlur={onLeave}
+							dangerouslySetInnerHTML={{__html: column.content}}
 					/>
 				)}</tr>
 			)}</thead>
@@ -31,11 +31,11 @@ const Gumijul = ({
 			<tbody>{body.map((row, i) =>
 				<tr key={i}>{row.map((column, j) =>
 					<td key={j}
-					    contentEditable={true}
-					    onSelect={onSelect}
-					    onClick={onPick}
-					    onBlur={onLeave}
-							dangerouslySetInnerHTML={{__html:column.content}}/>
+							contentEditable={true}
+							onSelect={onSelect}
+							onClick={onPick}
+							onBlur={onLeave}
+							dangerouslySetInnerHTML={{__html: column.content}}/>
 				)}</tr>
 			)}</tbody>
 		</table>
@@ -43,6 +43,25 @@ const Gumijul = ({
 		<CellEditor/>
 	</div>
 )
+
+const withStyledGumijul = withStyles(createStyleSheet('Gumijul', theme => ({
+		'table': {
+			borderCollapse: 'collapse',
+			tableLayout:    'fixed',
+			minWidth:       '30px',
+			'& th, & td':   {
+				border:       '1px solid #ccc',
+				fontSize:     '1rem',
+				height:       '1rem',
+				outline:      'none',
+				'&.selected': {
+					backgroundColor: 'rgba(100, 200, 200, .2)',
+				}
+			}
+		}
+	})
+	)
+)(Gumijul)
 
 export default connect(
 	state => ({
@@ -60,25 +79,4 @@ export default connect(
 				console.log(window.getSelection().toString())
 		}
 	})
-)
-(
-	withStyles(createStyleSheet('Gumijul', theme => ({
-			'table': {
-				borderCollapse: 'collapse',
-				tableLayout:    'fixed',
-				minWidth:       '30px',
-				'& th, & td':   {
-					border:       '1px solid #ccc',
-					fontSize:     '1rem',
-					height:       '1rem',
-					outline:      'none',
-					'&.selected': {
-						backgroundColor: 'rgba(100, 200, 200, .2)',
-					}
-				}
-			}
-		})
-		)
-	)
-	(Gumijul)
-)
+)(withStyledGumijul)
