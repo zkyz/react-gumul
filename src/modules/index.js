@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux'
-import gumi from './gumi'
+import spider from './spider'
 
 export default combineReducers({
-	gumi
+	spider
 })

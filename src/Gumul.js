@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import {MuiThemeProvider} from 'material-ui/styles'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 
-import Gumi from './components/Gumi'
+import Spider from './components/Spider'
 
 const Gumul = ({id}) => (
 	<MuiThemeProvider>
 		<div>
-			<Gumi/>
+			<Spider/>
 		</div>
 	</MuiThemeProvider>
 )

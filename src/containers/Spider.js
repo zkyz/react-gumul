@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {createStyleSheet, withStyles} from 'material-ui/styles'
 import CellEditor from './CellEditor'
 
-const Gumijul = ({
+const Spider = ({
 									 classes, head, body,
 									 onPick, onLeave, onSelect
 								 }) => (
@@ -44,7 +44,7 @@ const Gumijul = ({
 	</div>
 )
 
-const withStyledGumijul = withStyles(createStyleSheet('Gumijul', theme => ({
+const withStyledGumijul = withStyles(createStyleSheet('Spider', theme => ({
 		'table': {
 			borderCollapse: 'collapse',
 			tableLayout:    'fixed',
@@ -61,7 +61,7 @@ const withStyledGumijul = withStyles(createStyleSheet('Gumijul', theme => ({
 		}
 	})
 	)
-)(Gumijul)
+)(Spider)
 
 export default connect(
 	state => ({

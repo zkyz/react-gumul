@@ -7,7 +7,7 @@ import FormatItalic from 'material-ui-icons/FormatItalic'
 import FormatUnderlined from 'material-ui-icons/FormatUnderlined'
 
 import Button from 'material-ui/Button'
-import {CompactPicker} from 'react-color'
+import {CompactPicker} from 'react-color/CompactPicker'
 
 class CellEditor extends React.PureComponent {
 

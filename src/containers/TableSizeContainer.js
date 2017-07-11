@@ -1,7 +1,7 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
 import {createStyleSheet, withStyles} from 'material-ui/styles'
-import {actions} from '../modules/gumi'
+import {actions} from '../modules/spider'
 
 const baseStyles = createStyleSheet({
 	padding:   '30px',
