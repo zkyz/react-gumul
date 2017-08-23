@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom'
 
 import Gumul from './Gumul'
 
-it('rendering', () => {
+it('Gumul 그려질거야', () => {
 	ReactDOM.render(
-		<Gumul>
-		</Gumul>,
+		<Gumul />,
 		document.createElement('div')
 	)
 })
