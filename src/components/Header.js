@@ -6,7 +6,7 @@ export default class Header extends React.Component {
 		cell: []
 	}
 
-	shouldComponentUpdate() {
+	static shouldComponentUpdate() {
 		console.log('shouldComponentUpdate')
 	}
 
@@ -15,7 +15,9 @@ export default class Header extends React.Component {
 		const {html} = this.props
 		const {cell} = this.state
 
+		let id = 0
 		let rowIndex = -1
+
 		html.props.children.forEach(tr => {
 			rowIndex++
 
@@ -25,6 +27,7 @@ export default class Header extends React.Component {
 
 			let cellIndex = -1
 			tr.props.children.forEach(th => {
+				id++
 				cellIndex++
 
 				if (th.props.colSpan > 1 && th.props.rowSpan > 1) {
@@ -39,8 +42,8 @@ export default class Header extends React.Component {
 							}
 
 							cell[rowIndex + i][cellIndex + j] = {
-								element:    th,
-								duplicated: i > 0 || j > 0
+								text: th.props.children,
+								id
 							}
 						}
 					}
@@ -54,8 +57,8 @@ export default class Header extends React.Component {
 						}
 
 						cell[rowIndex][cellIndex + i] = {
-							element:    th,
-							duplicated: i > 0
+							text: th.props.children,
+							id
 						}
 					}
 
@@ -72,8 +75,8 @@ export default class Header extends React.Component {
 						}
 
 						cell[rowIndex + i][cellIndex] = {
-							element:    th,
-							duplicated: i > 0
+							text: th.props.children,
+							id
 						}
 					}
 				}
@@ -87,8 +90,8 @@ export default class Header extends React.Component {
 					}
 
 					cell[rowIndex][cellIndex] = {
-						element:    th,
-						duplicated: false
+						text: th.props.children,
+						id
 					}
 				}
 			})
@@ -96,20 +99,14 @@ export default class Header extends React.Component {
 	}
 
 	render() {
-		const cell = [...this.state.cell]
-
-		cell.forEach(i => {
-			i[1].duplicated = true
-		})
-
-		console.log(cell)
+		const cells = this.generateHtml(this.state.cell, [0,1,2,5])
 
 		return (
 			<thead>
 			{
-				cell.map((tr, i) => <tr key={i}>
+				cells.map((row, i) => <tr key={i}>
 					{
-						tr.map((th, j) => this.renderCell(th, j))
+						row.map((cell, j) => <th key={j} {...cell}/>)
 					}
 				</tr>)
 			}
@@ -117,11 +114,60 @@ export default class Header extends React.Component {
 		)
 	}
 
-	renderCell(cell, index) {
-		if (!cell.duplicated) {
-			return (
-				<th key={index} {...cell.element.props}></th>
-			)
+	generateHtml(rawCells, hiddenIndex) {
+		let cells = []
+		if (!hiddenIndex) {
+			cells = [...rawCells]
 		}
+		else {
+			let indexes = null
+			if (Array.isArray(hiddenIndex)) {
+				indexes = hiddenIndex.sort((a, b) => b - a)
+			}
+			else if (Number.isInteger(hiddenIndex)) {
+				indexes = [hiddenIndex]
+			}
+
+			if (indexes) {
+				rawCells.forEach(_row => {
+					let row = [..._row]
+					indexes.forEach(i => {
+						row = row.slice(0, i).concat(row.slice(i + 1))
+					})
+					cells.push(row)
+				})
+			}
+		}
+
+		let cid = -1
+		const rows = []
+
+		for (let i = 0; i < cells.length; i++) {
+			const row = []
+
+			for (let j = 0; j < cells[i].length; j++) {
+				if (cells[i][j].id > cid) {
+					cid = cells[i][j].id
+
+					let colSpan = 0
+					while (cells[i].length > j + ++colSpan
+						&& cid === cells[i][j + colSpan].id) {}
+
+					let rowSpan = 0
+					while (cells.length > i + ++rowSpan
+						&& cid === cells[i + rowSpan][j].id) {}
+
+					const cell = {children: cells[i][j].text}
+					if (colSpan > 1) cell.colSpan = colSpan
+					if (rowSpan > 1) cell.rowSpan = rowSpan
+
+					row.push(cell)
+				}
+			}
+
+			rows.push(row)
+		}
+
+		return rows
 	}
 }
