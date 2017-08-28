@@ -4,7 +4,8 @@ export const types = {
 	CREATE: 'GUMUL@CREATE',
 	HEADER: {
 		DEFINITION: 'GUMUL@HEADER_DEFINITION',
-		GENERATION: 'GUMUL@HEADER_GENERATION'
+		GENERATION: 'GUMUL@HEADER_GENERATION',
+		HIDE_CELLS: 'GUMUL@HEADER_HIDE_CELLS'
 	}
 }
 
@@ -12,7 +13,8 @@ export const actions = {
 	create: createAction(types.CREATE),
 	header: {
 		definition: createAction(types.HEADER.DEFINITION),
-		generation: createAction(types.HEADER.GENERATION)
+		generation: createAction(types.HEADER.GENERATION),
+		hideCells:  createAction(types.HEADER.HIDE_CELLS)
 	}
 }
 
@@ -25,13 +27,14 @@ export default handleActions(
 				throw new Error('id="${id}" already in used.')
 			}
 
+			const definedHeader = defineHeaderElements(head)
 			return {
 				...state,
 				[id]: {
 					width:  [],
 					header: {
-						defined:   definition(head),
-						generated: []
+						defined:   definedHeader,
+						generated: generateViaDefined(definedHeader)
 					},
 					body:   {
 						defined:   [],
@@ -43,11 +46,21 @@ export default handleActions(
 		[types.HEADER.DEFINITION]: (state, action) => {
 		},
 		[types.HEADER.GENERATION]: (state, action) => {
+		},
+		[types.HEADER.HIDE_CELLS]: (state, action) => {
+			const {id, cells} = action.payload
+
+			const result = {...state}
+			const {header} = result[id]
+
+			header.generated = generateViaDefined(header.defined, cells)
+
+			return result
 		}
 	},
 	{})
 
-const definition = html => {
+const defineHeaderElements = html => {
 
 	let id = 0
 	let rowIndex = -1
@@ -126,4 +139,74 @@ const definition = html => {
 	})
 
 	return items
+}
+
+const generateViaDefined = (rawCells, hiddenIndex) => {
+
+	let cells = []
+
+	if (!hiddenIndex) {
+		cells = [...rawCells]
+	}
+	else {
+
+		let indexes = null
+
+		if (Array.isArray(hiddenIndex)) {
+			indexes = hiddenIndex.sort((a, b) => b - a)
+		}
+		else if (Number.isInteger(hiddenIndex)) {
+			indexes = [hiddenIndex]
+		}
+
+		if (indexes) {
+			rawCells.forEach(_row => {
+
+				let row = [..._row]
+
+				indexes.forEach(i => {
+					row = row.slice(0, i).concat(row.slice(i + 1))
+				})
+
+				cells.push(row)
+			})
+		}
+	}
+
+	let cid = -1
+	const rows = []
+
+	for (let i = 0; i < cells.length; i++) {
+
+		const row = []
+
+		for (let j = 0; j < cells[i].length; j++) {
+			if (cells[i][j].id > cid) {
+				cid = cells[i][j].id
+
+				let colSpan = 0
+
+				while (cells[i].length > j + ++colSpan
+				&& cid === cells[i][j + colSpan].id) {
+				}
+
+				let rowSpan = 0
+
+				while (cells.length > i + ++rowSpan
+				&& cid === cells[i + rowSpan][j].id) {
+				}
+
+				const cell = {children: cells[i][j].text}
+
+				if (colSpan > 1) cell.colSpan = colSpan
+				if (rowSpan > 1) cell.rowSpan = rowSpan
+
+				row.push(cell)
+			}
+		}
+
+		rows.push(row)
+	}
+
+	return rows
 }

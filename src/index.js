@@ -13,7 +13,14 @@ import {MuiThemeProvider, createMuiTheme} from 'material-ui/styles'
 const extension = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 const store = createStore(reducers, extension)
 
-const theme = createMuiTheme()
+const theme = createMuiTheme({
+	typography: {
+		fontFamily: ['Roboto', 'NanumSquare', 'sans-serif'],
+		fontWeightLight: 100,
+		fontWeightRegular: 300,
+		fontWeightMedium: 400
+	}
+})
 
 ReactDOM.render(
 	<Provider store={store}>
