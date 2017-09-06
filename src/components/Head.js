@@ -2,7 +2,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 
-const Header = ({generated}) => (
+const Head = ({generated}) => (
 	<thead>
 	{
 		generated ?
@@ -16,19 +16,19 @@ const Header = ({generated}) => (
 	</thead>
 )
 
-Header.propTypes = {
-	pid: PropTypes.string.isRequired
+Head.propTypes = {
+	pid:       PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state, props) => {
-	const header = {}
+	const head = {}
 	if (state.gumul.hasOwnProperty(props.pid)) {
-		Object.assign(header, {
-			...state.gumul[props.pid].header
+		Object.assign(head, {
+			...state.gumul[props.pid].head
 		})
 	}
 
-	return header
+	return head
 }
 
-export default connect(mapStateToProps)(Header)
+export default connect(mapStateToProps)(Head)

@@ -4,21 +4,18 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import MoreHoriz from 'material-ui-icons/MoreHoriz'
 import IconButton from 'material-ui/IconButton'
 import {withStyles} from 'material-ui/styles'
-import Header from './components/Header'
+import Head from './components/Head'
 import {actions} from './modules/gumul'
 import {connect} from 'react-redux'
+import Body from './components/Body'
 
 // material-ui required
 injectTapEventPlugin()
 
-class Gumul extends React.PureComponent {
+class Gumul extends React.Component {
 
 	componentDidMount() {
 		this.props.onCreate()
-	}
-
-	static shouldComponentUpdate() {
-		console.log('shouldComponentUpdate')
 	}
 
 	render() {
@@ -31,7 +28,8 @@ class Gumul extends React.PureComponent {
 						{title}
 						<IconButton onClick={onHideCells}><MoreHoriz/></IconButton>
 					</caption>
-					<Header pid={id}/>
+					<Head pid={id}/>
+					<Body pid={id}/>
 				</table>
 			</div>
 		)
@@ -39,22 +37,27 @@ class Gumul extends React.PureComponent {
 }
 
 Gumul.propTypes = {
-	id: PropTypes.string.isRequired
+	id:    PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	head:  PropTypes.element.isRequired,
+	body:  PropTypes.element.isRequired
 }
 
-const mapDispatchToProps = (dispatch, state) => ({
+const mapDispatchToProps = (dispatch, props) => ({
 	onCreate:    () => {
 		dispatch(actions.create(
 			{
-				id:   state.id,
-				head: state.head
+				id:   props.id,
+				uri:	props.uri,
+				head: props.head,
+				body: props.body
 			}
 		))
 	},
 	onHideCells: () => {
 		dispatch(actions.header.hideCells(
 			{
-				id:    state.id,
+				id:    props.id,
 				cells: [1, 2, 3]
 			}
 		))
@@ -67,6 +70,7 @@ export default connect(undefined, mapDispatchToProps)(
 			'color':   theme.palette.text.primary,
 			'& table': {
 				'table-layout': 'fixed',
+				'border-collapse': 'collapse',
 				'& caption':    {
 					'height':     '42px',
 					'font-size':  '1.5rem',
@@ -91,6 +95,9 @@ export default connect(undefined, mapDispatchToProps)(
 					'text-overflow': 'ellipsis',
 					'white-space':   'nowrap',
 					'width':         30
+				},
+				'& .empty-row': {
+					'text-align': 'center'
 				}
 			}
 		}

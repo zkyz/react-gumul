@@ -6,7 +6,9 @@ export const types = {
 		DEFINITION: 'GUMUL@HEADER_DEFINITION',
 		GENERATION: 'GUMUL@HEADER_GENERATION',
 		HIDE_CELLS: 'GUMUL@HEADER_HIDE_CELLS'
-	}
+	},
+	LOAD:   'GUMUL@LOAD'
+
 }
 
 export const actions = {
@@ -15,30 +17,37 @@ export const actions = {
 		definition: createAction(types.HEADER.DEFINITION),
 		generation: createAction(types.HEADER.GENERATION),
 		hideCells:  createAction(types.HEADER.HIDE_CELLS)
-	}
+	},
+	load:   createAction(types.LOAD)
 }
 
 export default handleActions(
 	{
 		[types.CREATE]:            (state, action) => {
-			const {id, head} = action.payload
+			const {id, uri, head, body} = action.payload
 
 			if (state.hasOwnProperty(id)) {
 				throw new Error('id="${id}" already in used.')
 			}
 
-			const definedHeader = defineHeaderElements(head)
+			const defined = {
+				head: defineElements(head),
+				body: defineElements(body, true)
+			}
+
 			return {
 				...state,
 				[id]: {
-					width:  [],
-					header: {
-						defined:   definedHeader,
-						generated: generateViaDefined(definedHeader)
+					uri,
+					data:  [],
+					width: [],
+					head:  {
+						defined:   defined.head,
+						generated: generateViaDefined(defined.head)
 					},
-					body:   {
-						defined:   [],
-						generated: []
+					body:  {
+						defined:   defined.body,
+						generated: generateViaDefined(defined.body, true)
 					}
 				}
 			}
@@ -48,30 +57,46 @@ export default handleActions(
 		[types.HEADER.GENERATION]: (state, action) => {
 		},
 		[types.HEADER.HIDE_CELLS]: (state, action) => {
-			const {id, cells} = action.payload
-
 			const result = {...state}
-			const {header} = result[id]
 
-			header.generated = generateViaDefined(header.defined, cells)
+			const {id, cells} = action.payload
+			result[id].head.generated = generateViaDefined(result[id].head.defined, cells)
 
 			return result
+		},
+		[types.LOAD]:              (state, action) => {
+			const {id} = action.payload
+			return {
+				...state
+			}
 		}
 	},
 	{})
 
-const defineHeaderElements = html => {
+const defineElements = (html, isDataCell) => {
 
 	let id = 0
 	let rowIndex = -1
 
 	const items = []
-	const ref = (element, id) => ({
-		text: element.props.children,
-		id
-	})
+	const ref = (element, id) =>
+		isDataCell ? ({
+				id,
+				name:   element.props['data-name'],
+				type:   element.props['data-type'],
+				format: element.props['data-format']
+			})
+			: ({
+				id,
+				children: element.props.children
+			})
 
-	html.props.children.forEach(tr => {
+	let rows = html.props.children
+	if (!Array.isArray(rows)) {
+		rows = [rows]
+	}
+
+	rows.forEach(tr => {
 		rowIndex++
 
 		if (!items[rowIndex]) {
@@ -79,7 +104,13 @@ const defineHeaderElements = html => {
 		}
 
 		let cellIndex = -1
-		tr.props.children.forEach(th => {
+
+		let cells = tr.props.children
+		if (!Array.isArray(cells)) {
+			cells = [cells]
+		}
+
+		cells.forEach(th => {
 			id++
 			cellIndex++
 
@@ -141,37 +172,7 @@ const defineHeaderElements = html => {
 	return items
 }
 
-const generateViaDefined = (rawCells, hiddenIndex) => {
-
-	let cells = []
-
-	if (!hiddenIndex) {
-		cells = [...rawCells]
-	}
-	else {
-
-		let indexes = null
-
-		if (Array.isArray(hiddenIndex)) {
-			indexes = hiddenIndex.sort((a, b) => b - a)
-		}
-		else if (Number.isInteger(hiddenIndex)) {
-			indexes = [hiddenIndex]
-		}
-
-		if (indexes) {
-			rawCells.forEach(_row => {
-
-				let row = [..._row]
-
-				indexes.forEach(i => {
-					row = row.slice(0, i).concat(row.slice(i + 1))
-				})
-
-				cells.push(row)
-			})
-		}
-	}
+const generateViaDefined = (cells, isDataCell) => {
 
 	let cid = -1
 	const rows = []
@@ -188,16 +189,19 @@ const generateViaDefined = (rawCells, hiddenIndex) => {
 
 				while (cells[i].length > j + ++colSpan
 				&& cid === cells[i][j + colSpan].id) {
+					//
 				}
 
 				let rowSpan = 0
 
 				while (cells.length > i + ++rowSpan
 				&& cid === cells[i + rowSpan][j].id) {
+					//
 				}
 
-				const cell = {children: cells[i][j].text}
+				const cell = {...cells[i][j]}
 
+				cell.children = cells[i][j].children
 				if (colSpan > 1) cell.colSpan = colSpan
 				if (rowSpan > 1) cell.rowSpan = rowSpan
 

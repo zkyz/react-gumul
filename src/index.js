@@ -27,6 +27,7 @@ ReactDOM.render(
 		<MuiThemeProvider theme={theme}>
 			<Gumul id="test"
 						 title="미리해보기"
+						 uri="http://www.filltext.com/?rows=10&fname={firstName}&lname={lastName}&tel={phone|format}&address={addressObject}&city={city}&state={usState}&hasOwnCells={numberRange|10000,999999}&words={lorem|50}&id={username}&pin={password}&adult={bool}&ip={ip}&birthday={date}"
 						 head={
 							 <thead>
 							 <tr>
@@ -58,19 +59,22 @@ ReactDOM.render(
 						 body={
 							 <tbody>
 							 <tr>
-								 <td data-name="fname"/>
-								 <td data-name="lname"/>
-								 <td data-name="birthday"/>
-								 <td data-name="hasOwnCells"/>
-								 <td data-name="id"/>
-								 <td data-name="pin"/>
-								 <td data-name="ip"/>
-								 <td data-name="adult"/>
-								 <td data-name="city"/>
+								 <td rowSpan="2" data-name="fname"/>
+								 <td rowSpan="2" data-name="lname"/>
+								 <td rowSpan="2" data-name="birthday"/>
+								 <td rowSpan="2" data-name="hasOwnCells"/>
+								 <td rowSpan="2" data-name="id"/>
+								 <td rowSpan="2" data-name="pin"/>
+								 <td rowSpan="2" data-name="ip"/>
+								 <td rowSpan="2" data-name="adult"/>
+								 <td rowSpan="2" data-name="city"/>
 								 <td data-name="state"/>
-								 <td data-name="address.streetAddress"/>
-								 <td data-name="address.zip"/>
-								 <td data-name="words"/>
+								 <td rowSpan="2" data-name="address.streetAddress"/>
+								 <td rowSpan="2" data-name="address.zip"/>
+								 <td rowSpan="2" data-name="words"/>
+							 </tr>
+							 <tr>
+								 <td data-name="address.state"></td>
 							 </tr>
 							 </tbody>
 						 }
