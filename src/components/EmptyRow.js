@@ -1,21 +1,18 @@
 import * as React from 'react'
 
-export default class EmptyRow extends React.Component {
+const EmptyRow = ({generated}) => {
 
-	shouldComponentUpdate(props) {
-		this.colSpan = 1
-		props.generated[0].forEach(element => {
-			this.colSpan += (element.colSpan || 1)
-		})
+	let colSpan = 1
 
-		return true
-	}
+	generated[0].forEach(element => {
+		colSpan += (element.colSpan || 1)
+	})
 
-	render() {
-		return (
-			<tr className="empty-row">
-				<td colSpan={this.colSpan}>No has data.</td>
-			</tr>
-		)
-	}
+	return (
+		<tr className="empty-row">
+			<td colSpan={colSpan}>No has data.</td>
+		</tr>
+	)
 }
+
+export default EmptyRow

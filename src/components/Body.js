@@ -7,13 +7,22 @@ import {actions} from '../modules/gumul'
 
 class Body extends React.Component {
 
-	componentDidMount() {
-		// TODO fetch and call dispatch as save data
-		console.log(this.props)
+	componentWillReceiveProps(props) {
+		// if (props.uri) {
+		// 	fetch(props.uri)
+		// 		.then(response => response.json())
+		// 		.then(response => props.onLoad(response))
+		// }
 	}
 
 	render() {
 		const {body, data} = this.props
+
+		console.log('render')
+
+		if (!body) {
+			return (<tbody/>)
+		}
 
 		return (
 			<tbody>
@@ -35,21 +44,16 @@ Body.propTypes = {
 	pid: PropTypes.string.isRequired
 }
 
-const mapStateToProps = (state, props) => {
-	const out = {}
-	if (state.gumul.hasOwnProperty(props.pid)) {
-		Object.assign(out, {
-			...state.gumul[props.pid]
-		})
-	}
-
-	return out
-}
+const mapStateToProps = (state, props) => ({
+	...state.gumul[props.pid]
+})
 
 const mapDispatchToProps = (dispatch, props) => ({
-	onLoad: () => {
+	onLoad: (data) => {
+		console.log('dispatch')
 		dispatch(actions.load({
-			id: props.pid
+			id: props.pid,
+			data
 		}))
 	}
 })

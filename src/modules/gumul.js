@@ -65,9 +65,16 @@ export default handleActions(
 			return result
 		},
 		[types.LOAD]:              (state, action) => {
-			const {id} = action.payload
+			const {id, data} = action.payload
+
+			console.log(action.payload)
+
 			return {
-				...state
+				...state,
+				[id]: {
+					...state[id],
+					data
+				}
 			}
 		}
 	},
