@@ -25,8 +25,7 @@ const theme = createMuiTheme({
 ReactDOM.render(
 	<Provider store={store}>
 		<MuiThemeProvider theme={theme}>
-			<Gumul id="test"
-						 title="미리해보기"
+			<Gumul title="미리해보기"
 						 uri="http://www.filltext.com/?rows=10&fname={firstName}&lname={lastName}&tel={phone|format}&address={addressObject}&city={city}&state={usState}&hasOwnCells={numberRange|10000,999999}&words={lorem|50}&id={username}&pin={password}&adult={bool}&ip={ip}&birthday={date}"
 						 head={
 							 <thead>

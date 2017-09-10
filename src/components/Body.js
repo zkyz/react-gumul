@@ -1,51 +1,37 @@
 import * as React from 'react'
-import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
-import DataCell from './DataCell'
-import EmptyRow from './EmptyRow'
 import {actions} from '../modules/gumul'
+import DataCell from './DataCell'
 
-class Body extends React.Component {
+const Body = ({body, data}) => {
 
-	componentWillReceiveProps(props) {
-		// if (props.uri) {
-		// 	fetch(props.uri)
-		// 		.then(response => response.json())
-		// 		.then(response => props.onLoad(response))
-		// }
+	if (!body || data.length === 0) {
+		return (<tbody/>)
 	}
 
-	render() {
-		const {body, data} = this.props
-
-		console.log('render')
-
-		if (!body) {
-			return (<tbody/>)
-		}
-
-		return (
-			<tbody>
-			{
-				!data || data.length === 0 ? <EmptyRow {...body}/> :
-					body.generated.map((row, i) =>
-						<tr key={i}>
-							{
-								row.map((cell, j) => <DataCell key={j} info={cell} data={data}/>)
-							}
-						</tr>)
-			}
-			</tbody>
+	const draw = (item) => (
+		body.generated.map((row, i) =>
+			<tr key={i}>
+				{
+					row.map((cell, j) => <DataCell key={j} info={cell} data={item}/>)
+				}
+			</tr>
 		)
-	}
+	)
+
+	return (
+		<tbody>
+		{
+			data.map((item, i) => draw(item))
+		}
+		</tbody>
+	)
 }
 
-Body.propTypes = {
-	pid: PropTypes.string.isRequired
-}
 
 const mapStateToProps = (state, props) => ({
-	...state.gumul[props.pid]
+	body: state.gumul.body,
+	data: state.gumul.data
 })
 
 const mapDispatchToProps = (dispatch, props) => ({

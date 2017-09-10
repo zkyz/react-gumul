@@ -24,11 +24,7 @@ export const actions = {
 export default handleActions(
 	{
 		[types.CREATE]:            (state, action) => {
-			const {id, uri, head, body} = action.payload
-
-			if (state.hasOwnProperty(id)) {
-				throw new Error('id="${id}" already in used.')
-			}
+			const {uri, head, body} = action.payload
 
 			const defined = {
 				head: defineElements(head),
@@ -37,18 +33,16 @@ export default handleActions(
 
 			return {
 				...state,
-				[id]: {
-					uri,
-					data:  [],
-					width: [],
-					head:  {
-						defined:   defined.head,
-						generated: generateViaDefined(defined.head)
-					},
-					body:  {
-						defined:   defined.body,
-						generated: generateViaDefined(defined.body, true)
-					}
+				uri,
+				data:  [],
+				width: [],
+				head:  {
+					defined:   defined.head,
+					generated: generateViaDefined(defined.head)
+				},
+				body:  {
+					defined:   defined.body,
+					generated: generateViaDefined(defined.body, true)
 				}
 			}
 		},
@@ -65,20 +59,16 @@ export default handleActions(
 			return result
 		},
 		[types.LOAD]:              (state, action) => {
-			const {id, data} = action.payload
-
-			console.log(action.payload)
+			const {data} = action.payload
 
 			return {
 				...state,
-				[id]: {
-					...state[id],
-					data
-				}
+				data
 			}
 		}
 	},
-	{})
+	{}
+)
 
 const defineElements = (html, isDataCell) => {
 

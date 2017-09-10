@@ -11,9 +11,10 @@ const DataCell = ({info, data}) => {
 	if (info.hasOwnProperty('rowSpan')) dressedInfo.rowSpan = info.rowSpan
 	if (info.hasOwnProperty('colSpan')) dressedInfo.colSpan = info.colSpan
 
+	console.log(`${info.name} = ${data[info.name]}`)
 
 	return (
-		<td {...dressedInfo} />
+		<td {...dressedInfo}/>
 	)
 }
 

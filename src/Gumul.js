@@ -8,6 +8,7 @@ import Head from './components/Head'
 import {actions} from './modules/gumul'
 import {connect} from 'react-redux'
 import Body from './components/Body'
+import axios from 'axios'
 
 // material-ui required
 injectTapEventPlugin()
@@ -16,20 +17,25 @@ class Gumul extends React.Component {
 
 	componentDidMount() {
 		this.props.onCreate()
+
+		if (this.props.uri) {
+			axios.get(this.props.uri)
+			.then(response => this.props.onLoad(response.data))
+		}
 	}
 
 	render() {
-		const {classes, id, title, onHideCells} = this.props
+		const {classes, title, onHideCells} = this.props
 
 		return (
-			<div id={id} className={classes.base}>
+			<div className={classes.base}>
 				<table>
 					<caption>
 						{title}
 						<IconButton onClick={onHideCells}><MoreHoriz/></IconButton>
 					</caption>
-					<Head pid={id}/>
-					<Body pid={id}/>
+					<Head/>
+					<Body/>
 				</table>
 			</div>
 		)
@@ -37,7 +43,6 @@ class Gumul extends React.Component {
 }
 
 Gumul.propTypes = {
-	id:    PropTypes.string.isRequired,
 	title: PropTypes.string.isRequired,
 	head:  PropTypes.element.isRequired,
 	body:  PropTypes.element.isRequired
@@ -48,11 +53,17 @@ const mapDispatchToProps = (dispatch, props) => ({
 		dispatch(actions.create(
 			{
 				id:   props.id,
-				uri:	props.uri,
+				uri:  props.uri,
 				head: props.head,
 				body: props.body
 			}
 		))
+	},
+	onLoad:      (data) => {
+		dispatch(actions.load({
+			id: props.id,
+			data
+		}))
 	},
 	onHideCells: () => {
 		dispatch(actions.header.hideCells(
@@ -69,9 +80,9 @@ export default connect(undefined, mapDispatchToProps)(
 		'base': {
 			'color':   theme.palette.text.primary,
 			'& table': {
-				'table-layout': 'fixed',
+				'table-layout':    'fixed',
 				'border-collapse': 'collapse',
-				'& caption':    {
+				'& caption':       {
 					'height':     '42px',
 					'font-size':  '1.5rem',
 					'padding':    '0 1rem',
@@ -80,11 +91,11 @@ export default connect(undefined, mapDispatchToProps)(
 						'vertical-align': 'middle'
 					}
 				},
-				'& th':         {
+				'& th':            {
 					'position':       'relative',
 					'vertical-align': 'bottom'
 				},
-				'& th,td':      {
+				'& th,td':         {
 					'border-color':  theme.palette.grey.A100,
 					'border-style':  'solid',
 					'border-width':  '0 0 1px',
@@ -96,7 +107,7 @@ export default connect(undefined, mapDispatchToProps)(
 					'white-space':   'nowrap',
 					'width':         30
 				},
-				'& .empty-row': {
+				'& .empty-row':    {
 					'text-align': 'center'
 				}
 			}
