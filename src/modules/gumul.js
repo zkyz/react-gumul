@@ -1,30 +1,31 @@
 import {createAction, handleActions} from 'redux-actions'
 
 export const types = {
-	CREATE: 'GUMUL@CREATE',
-	HEADER: {
+	CREATE:  'GUMUL@CREATE',
+	ARRANGE: 'GUMUL@ARRANGE',
+	HEADER:  {
 		DEFINITION: 'GUMUL@HEADER_DEFINITION',
 		GENERATION: 'GUMUL@HEADER_GENERATION',
 		HIDE_CELLS: 'GUMUL@HEADER_HIDE_CELLS'
 	},
-	LOAD:   'GUMUL@LOAD'
-
+	LOAD:    'GUMUL@LOAD'
 }
 
 export const actions = {
-	create: createAction(types.CREATE),
-	header: {
+	create:  createAction(types.CREATE),
+	arrange: createAction(types.ARRANGE),
+	header:  {
 		definition: createAction(types.HEADER.DEFINITION),
 		generation: createAction(types.HEADER.GENERATION),
 		hideCells:  createAction(types.HEADER.HIDE_CELLS)
 	},
-	load:   createAction(types.LOAD)
+	load:    createAction(types.LOAD)
 }
 
 export default handleActions(
 	{
 		[types.CREATE]:            (state, action) => {
-			const {uri, head, body} = action.payload
+			const {uri, title, height, head, body, widths} = action.payload
 
 			const defined = {
 				head: defineElements(head),
@@ -34,15 +35,29 @@ export default handleActions(
 			return {
 				...state,
 				uri,
-				data:  [],
-				width: [],
-				head:  {
+				title,
+				widths,
+				height,
+				head: {
 					defined:   defined.head,
 					generated: generateViaDefined(defined.head)
 				},
-				body:  {
+				body: {
+					css:       {},
 					defined:   defined.body,
 					generated: generateViaDefined(defined.body, true)
+				}
+			}
+		},
+		[types.ARRANGE]:           (state, action) => {
+			return {
+				...state,
+				body: {
+					...state.body,
+					css: {
+						top:    action.payload,
+						height: state.height - action.payload
+					}
 				}
 			}
 		},

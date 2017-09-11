@@ -1,46 +1,64 @@
 import * as React from 'react'
 import {connect} from 'react-redux'
-import {actions} from '../modules/gumul'
+import axios from 'axios'
 import DataCell from './DataCell'
 
-const Body = ({body, data}) => {
+class Body extends React.Component {
 
-	if (!body || data.length === 0) {
-		return (<tbody/>)
+	componentDidMount() {
+		if (this.props.uri) {
+			axios.get(this.props.uri)
+			.then(response => {
+				this.setState({
+					data: response.data
+				})
+			})
+		}
 	}
 
-	const draw = (item) => (
-		body.generated.map((row, i) =>
-			<tr key={i}>
-				{
-					row.map((cell, j) => <DataCell key={j} info={cell} data={item}/>)
-				}
-			</tr>
+	draw(body, item) {
+		return (
+			body.generated.map((row, i) =>
+				<tr key={i}>
+					{
+						row.map((cell, j) => <DataCell key={j} info={cell} data={item}/>)
+					}
+				</tr>
+			)
 		)
-	)
+	}
 
-	return (
-		<tbody>
-		{
-			data.map((item, i) => draw(item))
-		}
-		</tbody>
-	)
+	render() {
+
+		const {body, widths, onScrollX} = this.props
+
+		return (
+			<div className="body" style={body.css} onScroll={onScrollX}>
+				<table width={widths.reduce((i, j) => i + j)}>
+					<colgroup>
+						{
+							widths.map((width, i) => <col width={width} key={i}/>)
+						}
+					</colgroup>
+					<tbody>
+					{
+						this.state && this.state.data.map(item => this.draw(body, item))
+					}
+					</tbody>
+				</table>
+			</div>
+		)
+	}
 }
 
 
-const mapStateToProps = (state, props) => ({
-	body: state.gumul.body,
-	data: state.gumul.data
+const mapStateToProps = state => ({
+	...state.gumul
 })
 
 const mapDispatchToProps = (dispatch, props) => ({
-	onLoad: (data) => {
-		console.log('dispatch')
-		dispatch(actions.load({
-			id: props.pid,
-			data
-		}))
+	onScrollX: (e) => {
+		console.log(e.target)
 	}
 })
 

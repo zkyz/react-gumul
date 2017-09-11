@@ -1,85 +1,71 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import injectTapEventPlugin from 'react-tap-event-plugin'
-import MoreHoriz from 'material-ui-icons/MoreHoriz'
-import IconButton from 'material-ui/IconButton'
 import {withStyles} from 'material-ui/styles'
 import Head from './components/Head'
 import {actions} from './modules/gumul'
 import {connect} from 'react-redux'
 import Body from './components/Body'
-import axios from 'axios'
 
 // material-ui required
 injectTapEventPlugin()
 
 class Gumul extends React.Component {
 
-	componentDidMount() {
+	componentWillMount() {
 		this.props.onCreate()
-
-		if (this.props.uri) {
-			axios.get(this.props.uri)
-			.then(response => this.props.onLoad(response.data))
-		}
 	}
 
 	render() {
-		const {classes, title, onHideCells} = this.props
+		const {classes, width, height} = this.props
 
 		return (
-			<div className={classes.base}>
-				<table>
-					<caption>
-						{title}
-						<IconButton onClick={onHideCells}><MoreHoriz/></IconButton>
-					</caption>
-					<Head/>
-					<Body/>
-				</table>
+			<div className={classes.base} style={{width, height}}>
+				<Head/>
+				<Body/>
 			</div>
 		)
 	}
 }
 
-Gumul.propTypes = {
-	title: PropTypes.string.isRequired,
-	head:  PropTypes.element.isRequired,
-	body:  PropTypes.element.isRequired
-}
+const mapStateToProps = state => ({
+	...state.gumul
+})
 
 const mapDispatchToProps = (dispatch, props) => ({
-	onCreate:    () => {
-		dispatch(actions.create(
-			{
-				id:   props.id,
-				uri:  props.uri,
-				head: props.head,
-				body: props.body
-			}
-		))
-	},
-	onLoad:      (data) => {
-		dispatch(actions.load({
-			id: props.id,
-			data
-		}))
-	},
-	onHideCells: () => {
-		dispatch(actions.header.hideCells(
-			{
-				id:    props.id,
-				cells: [1, 2, 3]
-			}
-		))
+	onCreate: () => {
+		dispatch(
+			actions.create({
+				...props
+			})
+		)
 	}
 })
 
-export default connect(undefined, mapDispatchToProps)(
+export default connect(mapStateToProps, mapDispatchToProps)(
 	withStyles(theme => ({
 		'base': {
-			'color':   theme.palette.text.primary,
-			'& table': {
+			'color':      theme.palette.text.primary,
+			'height':     300,
+			'width':      500,
+			'min-height': 150,
+			'overflow':   'auto',
+			'position':   'relative',
+			'& >.head':   {
+				'background-color': '#fff',
+				'left':             0,
+				'overflow':         'auto',
+				'position':         'absolute',
+				'top':              0,
+				'width':            '100%',
+				'z-index':          100
+			},
+			'& >.body':   {
+				'left':     0,
+				'position': 'relative',
+				'overflow': 'auto'
+			},
+			'& table':    {
 				'table-layout':    'fixed',
 				'border-collapse': 'collapse',
 				'& caption':       {

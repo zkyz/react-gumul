@@ -27,6 +27,9 @@ ReactDOM.render(
 		<MuiThemeProvider theme={theme}>
 			<Gumul title="미리해보기"
 						 uri="http://www.filltext.com/?rows=10&fname={firstName}&lname={lastName}&tel={phone|format}&address={addressObject}&city={city}&state={usState}&hasOwnCells={numberRange|10000,999999}&words={lorem|50}&id={username}&pin={password}&adult={bool}&ip={ip}&birthday={date}"
+						 height={400}
+						 width={550}
+						 widths={[60, 90, 100, 70, 90, 90, 120, 60, 80, 100, 50, 40, 200]}
 						 head={
 							 <thead>
 							 <tr>
